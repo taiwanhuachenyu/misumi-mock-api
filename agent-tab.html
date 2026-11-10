@@ -39,8 +39,18 @@
 const q = new URLSearchParams(location.search);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 let D = null, tab = "orders";
-const focusOrder = (q.get("orderNo") || "").toUpperCase();
-const focusSku = q.get("sku") || "";
+// 工作台自定义 TAB 勾选系统变量 visitorExtraInfo 后，会把访客进线带的 JSON 拼到链接上（可能被编码 1~2 次）
+function parseExtra(v) {
+  for (let i = 0; i < 3 && v; i++) {
+    try { const o = JSON.parse(v); if (o && typeof o === "object") return o; } catch (e) {}
+    try { v = decodeURIComponent(v); } catch (e) { break; }
+  }
+  return {};
+}
+const extra = parseExtra(q.get("visitorExtraInfo"));
+const focusOrder = (q.get("orderNo") || extra.orderNo || "").toUpperCase();
+const focusSku = q.get("sku") || extra.sku || "";
+const entryText = extra.entry ? `访客从【${extra.entry}】进线` + (extra.orderNo ? `｜订单 ${extra.orderNo}` : "") + (extra.product ? `｜${extra.product}` : "") : "";
 
 function toast(t) {
   const el = document.getElementById("toast");
@@ -113,8 +123,8 @@ document.getElementById("kw").oninput = render;
 
 fetch("data.json").then(r => r.json()).then(d => {
   D = d;
-  document.getElementById("code").textContent = q.get("customerCode") || d.customer.code;
-  document.getElementById("company").textContent = d.customer.company + "｜" + d.customer.contact;
+  document.getElementById("code").textContent = q.get("customerCode") || extra.customerCode || d.customer.code;
+  document.getElementById("company").textContent = entryText || (d.customer.company + "｜" + d.customer.contact);
   if (focusSku && !focusOrder) { tab = "products"; document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "products")); }
   render();
 }).catch(e => document.getElementById("list").textContent = "数据加载失败：" + e);
