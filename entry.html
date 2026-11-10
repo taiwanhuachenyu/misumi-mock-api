@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>米思米演示站 · 在线咨询入口（POC）</title>
+<style>
+  body{margin:0;font-family:"Microsoft YaHei",system-ui,sans-serif;background:#f4f6f9;color:#1f2933}
+  header{background:#00529b;color:#fff;padding:12px 24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  header b{font-size:18px}
+  header a{color:#dbe9f7;text-decoration:none;font-size:14px}
+  header a.on{color:#fff;font-weight:bold;border-bottom:2px solid #fff}
+  .tip{background:#fff8e1;color:#7a5b00;font-size:13px;padding:8px 24px}
+  main{max-width:960px;margin:24px auto;padding:0 16px}
+  .card{background:#fff;border-radius:10px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:16px}
+  .pd{display:flex;gap:28px;flex-wrap:wrap}
+  .pd img{width:240px;height:240px;border-radius:10px}
+  h1{font-size:22px;margin:0 0 8px}
+  .sub{color:#5a626e;margin-bottom:16px}
+  .price{color:#d4380d;font-size:26px;font-weight:bold;margin:8px 0}
+  dl{display:grid;grid-template-columns:88px 1fr;gap:6px 12px;margin:12px 0;font-size:14px}
+  dt{color:#5a626e}
+  .btn{display:inline-block;background:#00529b;color:#fff;border:0;border-radius:6px;padding:10px 22px;font-size:15px;cursor:pointer}
+  .btn.ghost{background:#fff;color:#00529b;border:1px solid #00529b}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px;border-bottom:1px solid #eef0f3}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;background:#e8f0f9;color:#00529b;font-size:12px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .mini{display:flex;gap:10px;align-items:center}
+  .mini img{width:48px;height:48px;border-radius:6px}
+  code{background:#f0f2f5;padding:1px 4px;border-radius:3px;font-size:12px}
+</style>
+</head>
+<body>
+<header><b>MISUMI 演示站</b><span id="nav"></span></header>
+<div class="tip">POC 演示页：模拟米思米官网的商品详情页 / 订单详情页。点「在线咨询」会带着当前商品或订单进入在线客服（linkCard 自动发送卡片 + visitorExtraInfo 传订单号/型号/顾客编码）。所有数据均为演示数据。</div>
+<main id="app">加载中…</main>
+<script>
+const CHAT = "https://webchat-bj.clink.cn/chat.html?accessId=82e57b3e-7a7e-452e-9c41-a224075c0ebc&tinetWebChatType=tinetResponsive";
+const q = new URLSearchParams(location.search);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+
+function chatUrl(linkCard, extra) {
+  return CHAT + "&linkCard=" + encodeURIComponent(JSON.stringify(linkCard)) +
+         "&visitorExtraInfo=" + encodeURIComponent(JSON.stringify(extra));
+}
+
+function productCard(D, sku) {
+  const p = D.products[sku];
+  return {autoSendOnSessionStart: 1, productList: [{
+    title: p.title, subtitle: p.subtitle, remark: p.remark, price: p.price, img: p.imgUrl,
+    agentNavigateTabName: D.tabName, visitorUrl: D.pages + "entry.html?page=product&sku=" + sku,
+    agentUrl: D.pages + "agent-tab.html?sku=" + sku, status: "正在浏览"}]};
+}
+
+function orderCard(D, o) {
+  return Object.assign({autoSendOnSessionStart: 1}, o.card);
+}
+
+function render(D) {
+  const page = q.get("page") || "product";
+  const skus = Object.keys(D.products);
+  document.getElementById("nav").innerHTML =
+    skus.slice(0, 2).map(s => `<a href="?page=product&sku=${s}" class="${page==="product"&&(q.get("sku")||skus[0])===s?"on":""}">商品：${esc(D.products[s].title.split(" ").pop())}</a>`).join(" ") +
+    ` <a href="?page=orders" class="${page!=="product"?"on":""}">我的订单</a>`;
+  const app = document.getElementById("app");
+  if (page === "product") {
+    const sku = D.products[q.get("sku")] ? q.get("sku") : skus[0];
+    const p = D.products[sku];
+    const url = chatUrl(productCard(D, sku), {customerCode: D.customer.code, entry: "商品详情页", sku, product: p.title});
+    app.innerHTML = `<div class="card pd"><img src="${p.imgUrl}" alt="">
+      <div style="flex:1;min-width:260px"><h1>${esc(p.title)}</h1><div class="sub">${esc(p.subtitle)}</div>
+      <div class="price">${esc(p.price)} <span style="font-size:13px;color:#5a626e;font-weight:normal">/ 件（含税）</span></div>
+      <dl><dt>型号</dt><dd>${esc(sku)}</dd><dt>出货天数</dt><dd>${esc(p.delivery)}</dd><dt>库存</dt><dd>${esc(p.stock)}</dd></dl>
+      <a class="btn" href="${url}" target="_blank">在线咨询</a></div></div>`;
+    return;
+  }
+  const no = q.get("no");
+  const o = D.orders.find(x => x.number === no);
+  if (page === "order" && o) {
+    const url = chatUrl(orderCard(D, o), {customerCode: D.customer.code, entry: "订单详情页", orderNo: o.number});
+    app.innerHTML = `<div class="card"><div class="row"><h1>订单 ${esc(o.number)} <span class="tag">${esc(o.status)}</span></h1>
+      <a class="btn" href="${url}" target="_blank">联系客服（带入本订单）</a></div>
+      <dl><dt>下单时间</dt><dd>${esc(o.time)}</dd><dt>物流</dt><dd>${esc(o.logistics)}</dd><dt>付款</dt><dd>${esc(o.pay)}</dd>
+      <dt>发票</dt><dd>${esc(o.invoice)}</dd><dt>收货地址</dt><dd>${esc(D.customer.address)}</dd><dt>合计</dt><dd>${esc(o.total)}</dd></dl>
+      <table><tr><th>商品</th><th>型号</th><th>数量</th><th>单价</th></tr>${o.items.map(i => {
+        const p = D.products[i.sku];
+        return `<tr><td><div class="mini"><img src="${p.imgUrl}" alt="">${esc(p.title)}</div></td><td>${esc(i.sku)}</td><td>${i.qty}</td><td>${esc(p.price)}</td></tr>`;
+      }).join("")}</table></div>`;
+    return;
+  }
+  app.innerHTML = `<div class="card"><h1>我的订单</h1><div class="sub">顾客编码 ${esc(D.customer.code)}｜${esc(D.customer.company)}</div>
+    <table><tr><th>订单号</th><th>下单时间</th><th>状态</th><th>合计</th><th></th></tr>${D.orders.map(o =>
+      `<tr><td>${esc(o.number)}</td><td>${esc(o.time)}</td><td><span class="tag">${esc(o.status)}</span></td><td>${esc(o.total)}</td>
+       <td><a class="btn ghost" href="?page=order&no=${o.number}">查看详情</a></td></tr>`).join("")}</table></div>`;
+}
+
+fetch("data.json").then(r => r.json()).then(render).catch(e => {
+  document.getElementById("app").textContent = "数据加载失败：" + e;
+});
+</script>
+</body>
+</html>

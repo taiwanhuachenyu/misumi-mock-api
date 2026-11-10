@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>米思米订单（座席侧边栏 POC）</title>
+<script src="https://chat-ws-bj.clink.cn/chat-commodity-card.js"></script>
+<style>
+  body{margin:0;font-family:"Microsoft YaHei",system-ui,sans-serif;font-size:13px;color:#1f2933;background:#f5f7fa}
+  .top{background:#00529b;color:#fff;padding:10px 12px}
+  .top b{font-size:14px}
+  .top div{opacity:.85;margin-top:2px}
+  .bar{display:flex;gap:6px;padding:8px 10px;background:#fff;border-bottom:1px solid #e6e9ee;position:sticky;top:0;z-index:2}
+  .bar input{flex:1;border:1px solid #cfd6df;border-radius:4px;padding:5px 8px;font-size:13px}
+  .tabs button{border:0;background:none;padding:5px 8px;cursor:pointer;color:#5a626e}
+  .tabs button.on{color:#00529b;font-weight:bold;border-bottom:2px solid #00529b}
+  .box{background:#fff;margin:8px 10px;border-radius:8px;padding:10px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+  .box.hl{outline:2px solid #fa8c16}
+  .hlTag{background:#fa8c16;color:#fff;border-radius:3px;padding:1px 6px;font-size:12px;margin-left:6px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tag{background:#e8f0f9;color:#00529b;border-radius:10px;padding:1px 8px;font-size:12px}
+  .kv{display:grid;grid-template-columns:52px 1fr;gap:3px 8px;margin:6px 0;color:#3d4550}
+  .kv span:nth-child(odd){color:#8a929c}
+  .item{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .item img{width:40px;height:40px;border-radius:4px}
+  .item .t{flex:1}
+  .item .s{color:#8a929c;font-size:12px}
+  button.send{background:#00529b;color:#fff;border:0;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:12px}
+  button.send.ghost{background:#fff;color:#00529b;border:1px solid #00529b}
+  #toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:6px 14px;border-radius:4px;display:none}
+</style>
+</head>
+<body>
+<div class="top"><b>米思米订单 · 客户 <span id="code"></span></b><div id="company"></div></div>
+<div class="bar"><input id="kw" placeholder="搜订单号 / 型号 / 商品名"><span class="tabs"><button data-t="orders" class="on">订单</button><button data-t="products">商品</button></span></div>
+<div id="list"></div>
+<div id="toast"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+let D = null, tab = "orders";
+const focusOrder = (q.get("orderNo") || "").toUpperCase();
+const focusSku = q.get("sku") || "";
+
+function toast(t) {
+  const el = document.getElementById("toast");
+  el.textContent = t; el.style.display = "block";
+  clearTimeout(toast.h); toast.h = setTimeout(() => el.style.display = "none", 2200);
+}
+
+function send(params, label) {
+  if (!window.ClinkChatApi || !ClinkChatApi.setIframeMsg) {
+    toast("请在在线客服工作台右侧「" + (D ? D.tabName : "米思米订单") + "」中使用");
+    return;
+  }
+  ClinkChatApi.setIframeMsg(params);
+  toast("已发送" + label);
+}
+
+function sendOrder(no) {
+  const o = D.orders.find(x => x.number === no);
+  send({cardType: "3", orderInfo: o.card}, "订单卡片 " + no);
+}
+
+function sendProduct(sku) {
+  const p = D.products[sku];
+  send({title: p.title, subTitle: p.subtitle, description: p.remark + "｜" + p.delivery + "｜库存 " + p.stock,
+        price: p.price, img: p.imgUrl, url: D.pages + "entry.html?page=product&sku=" + sku,
+        subUrl: D.pages + "agent-tab.html?sku=" + sku, tabMenuName: D.tabName, status: p.delivery, time: "",
+        extraInfo: [{name: "型号", value: sku}, {name: "出货", value: p.delivery}]}, "商品卡片 " + sku);
+}
+
+function orderHtml(o) {
+  const hl = focusOrder && o.number === focusOrder;
+  return `<div class="box ${hl ? "hl" : ""}"><div class="row"><b>${esc(o.number)}${hl ? '<span class="hlTag">客户正在咨询</span>' : ""}</b><span class="tag">${esc(o.status)}</span></div>
+    <div class="kv"><span>下单</span><span>${esc(o.time)}</span><span>物流</span><span>${esc(o.logistics)}</span>
+    <span>付款</span><span>${esc(o.pay)}</span><span>发票</span><span>${esc(o.invoice)}</span><span>合计</span><span>${esc(o.total)}</span></div>
+    ${o.items.map(i => { const p = D.products[i.sku];
+      return `<div class="item"><img src="${p.imgUrl}" alt=""><div class="t">${esc(p.title)}<div class="s">${esc(i.sku)} × ${i.qty}｜${esc(p.price)}</div></div></div>`; }).join("")}
+    <div style="text-align:right;margin-top:8px"><button class="send" onclick="sendOrder('${o.number}')">发送订单卡片</button></div></div>`;
+}
+
+function productHtml(sku) {
+  const p = D.products[sku];
+  const hl = focusSku === sku;
+  return `<div class="box ${hl ? "hl" : ""}"><div class="item"><img src="${p.imgUrl}" alt="">
+    <div class="t"><b>${esc(p.title)}</b>${hl ? '<span class="hlTag">客户正在浏览</span>' : ""}<div class="s">${esc(p.subtitle)}</div>
+    <div class="s">${esc(p.price)}｜${esc(p.delivery)}｜${esc(p.stock)}</div></div>
+    <button class="send ghost" onclick="sendProduct('${sku}')">发送商品卡片</button></div></div>`;
+}
+
+function render() {
+  const kw = document.getElementById("kw").value.trim().toUpperCase();
+  const hit = s => !kw || s.toUpperCase().includes(kw);
+  let html = "";
+  if (tab === "orders") {
+    const os = D.orders.filter(o => hit(o.number + o.items.map(i => i.sku + D.products[i.sku].title).join("")));
+    os.sort((a, b) => (b.number === focusOrder) - (a.number === focusOrder));
+    html = os.map(orderHtml).join("") || '<div class="box">没有匹配的订单</div>';
+  } else {
+    const ps = Object.keys(D.products).filter(s => hit(s + D.products[s].title));
+    ps.sort((a, b) => (b === focusSku) - (a === focusSku));
+    html = ps.map(productHtml).join("") || '<div class="box">没有匹配的商品</div>';
+  }
+  document.getElementById("list").innerHTML = html;
+}
+
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+  tab = b.dataset.t; render();
+});
+document.getElementById("kw").oninput = render;
+
+fetch("data.json").then(r => r.json()).then(d => {
+  D = d;
+  document.getElementById("code").textContent = q.get("customerCode") || d.customer.code;
+  document.getElementById("company").textContent = d.customer.company + "｜" + d.customer.contact;
+  if (focusSku && !focusOrder) { tab = "products"; document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "products")); }
+  render();
+}).catch(e => document.getElementById("list").textContent = "数据加载失败：" + e);
+</script>
+</body>
+</html>

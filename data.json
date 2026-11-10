@@ -1,0 +1,287 @@
+{
+ "cdn": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/",
+ "pages": "https://taiwanhuachenyu.github.io/misumi-mock-api/",
+ "tabName": "米思米订单",
+ "store": {
+  "title": "米思米（中国）·演示",
+  "logo": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/logo.png"
+ },
+ "customer": {
+  "code": "000009",
+  "company": "上海演示精密机械有限公司（POC）",
+  "contact": "张工 138****0009",
+  "address": "上海市浦东新区演示路 88 号 3 号楼"
+ },
+ "products": {
+  "LX20-B1-200": {
+   "title": "单轴机器人 LX200 直线模组",
+   "subtitle": "型号 LX20-B1-200｜行程 200mm｜导程 20",
+   "price": "¥3,860.00",
+   "img": "lx200.png",
+   "remark": "标准品",
+   "delivery": "标准出货 5 天",
+   "stock": "上海仓 3 台",
+   "sku": "LX20-B1-200",
+   "imgUrl": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/lx200.png"
+  },
+  "SFJ10-100": {
+   "title": "直线轴 一端螺纹 SFJ10-100",
+   "subtitle": "轴径 10mm｜长度 100mm｜SUJ2 淬火",
+   "price": "¥23.50",
+   "img": "shaft.png",
+   "remark": "当日出货",
+   "delivery": "当日出货",
+   "stock": "上海仓 1,200 根",
+   "sku": "SFJ10-100",
+   "imgUrl": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/shaft.png"
+  },
+  "B6000ZZ": {
+   "title": "深沟球轴承 B6000ZZ",
+   "subtitle": "内径 10mm｜外径 26mm｜双面铁盖",
+   "price": "¥8.20",
+   "img": "bearing.png",
+   "remark": "经济型",
+   "delivery": "当日出货",
+   "stock": "广州仓 5,000 个",
+   "sku": "B6000ZZ",
+   "imgUrl": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/bearing.png"
+  },
+  "HFS5-2020-500": {
+   "title": "铝合金型材 HFS5-2020-500",
+   "subtitle": "5 系列 20×20｜长度 500mm｜阳极氧化",
+   "price": "¥28.60",
+   "img": "frame.png",
+   "remark": "可切断",
+   "delivery": "标准出货 2 天",
+   "stock": "天津仓 800 根",
+   "sku": "HFS5-2020-500",
+   "imgUrl": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/frame.png"
+  }
+ },
+ "orders": [
+  {
+   "number": "BB125FAB83",
+   "time": "2026-11-06 14:20:31",
+   "status": "待发货",
+   "tag": "待发货",
+   "items": [
+    {
+     "sku": "LX20-B1-200",
+     "qty": 1
+    },
+    {
+     "sku": "SFJ10-100",
+     "qty": 20
+    }
+   ],
+   "logistics": "预计 2026-11-12 从上海仓发出（默认快递：德邦）",
+   "pay": "月结（付款函已生成）",
+   "invoice": "未开票",
+   "total": "¥4,330.00",
+   "card": {
+    "title": "米思米（中国）·演示",
+    "logo": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/logo.png",
+    "time": "2026-11-06 14:20:31",
+    "number": "BB125FAB83",
+    "status": "待发货",
+    "tag": {
+     "text": "待发货"
+    },
+    "price": "¥4,330.00",
+    "amount": "共21件",
+    "productList": [
+     {
+      "title": "单轴机器人 LX200 直线模组",
+      "subtitle": "型号 LX20-B1-200｜行程 200mm｜导程 20",
+      "remark": "标准品",
+      "price": "¥3,860.00",
+      "img": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/lx200.png",
+      "agentNavigateTabName": "米思米订单",
+      "visitorUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/entry.html?page=product&sku=LX20-B1-200",
+      "agentUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/agent-tab.html?sku=LX20-B1-200",
+      "clickInteraction": "1",
+      "amount": "x1"
+     },
+     {
+      "title": "直线轴 一端螺纹 SFJ10-100",
+      "subtitle": "轴径 10mm｜长度 100mm｜SUJ2 淬火",
+      "remark": "当日出货",
+      "price": "¥23.50",
+      "img": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/shaft.png",
+      "agentNavigateTabName": "米思米订单",
+      "visitorUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/entry.html?page=product&sku=SFJ10-100",
+      "agentUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/agent-tab.html?sku=SFJ10-100",
+      "clickInteraction": "1",
+      "amount": "x20"
+     }
+    ],
+    "extraData": [
+     {
+      "orderNo": "BB125FAB83",
+      "customerCode": "000009"
+     }
+    ]
+   }
+  },
+  {
+   "number": "BB125FAC17",
+   "time": "2026-11-03 09:12:05",
+   "status": "已发货",
+   "tag": "运输中",
+   "items": [
+    {
+     "sku": "B6000ZZ",
+     "qty": 50
+    }
+   ],
+   "logistics": "顺丰 SF1428803371922｜11-09 16:40 已到达【上海浦东集散中心】，预计 11-11 送达",
+   "pay": "月结",
+   "invoice": "已开票（电子专票）",
+   "total": "¥410.00",
+   "card": {
+    "title": "米思米（中国）·演示",
+    "logo": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/logo.png",
+    "time": "2026-11-03 09:12:05",
+    "number": "BB125FAC17",
+    "status": "已发货",
+    "tag": {
+     "text": "运输中"
+    },
+    "price": "¥410.00",
+    "amount": "共50件",
+    "productList": [
+     {
+      "title": "深沟球轴承 B6000ZZ",
+      "subtitle": "内径 10mm｜外径 26mm｜双面铁盖",
+      "remark": "经济型",
+      "price": "¥8.20",
+      "img": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/bearing.png",
+      "agentNavigateTabName": "米思米订单",
+      "visitorUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/entry.html?page=product&sku=B6000ZZ",
+      "agentUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/agent-tab.html?sku=B6000ZZ",
+      "clickInteraction": "1",
+      "amount": "x50"
+     }
+    ],
+    "extraData": [
+     {
+      "orderNo": "BB125FAC17",
+      "customerCode": "000009"
+     }
+    ]
+   }
+  },
+  {
+   "number": "BB1255EG64",
+   "time": "2026-10-28 15:47:18",
+   "status": "已签收",
+   "tag": "已签收",
+   "items": [
+    {
+     "sku": "HFS5-2020-500",
+     "qty": 33
+    }
+   ],
+   "logistics": "顺丰 SF1428800915536｜11-01 10:05 已签收（本人）",
+   "pay": "月结",
+   "invoice": "已开票（电子专票）",
+   "total": "¥943.80",
+   "card": {
+    "title": "米思米（中国）·演示",
+    "logo": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/logo.png",
+    "time": "2026-10-28 15:47:18",
+    "number": "BB1255EG64",
+    "status": "已签收",
+    "tag": {
+     "text": "已签收"
+    },
+    "price": "¥943.80",
+    "amount": "共33件",
+    "productList": [
+     {
+      "title": "铝合金型材 HFS5-2020-500",
+      "subtitle": "5 系列 20×20｜长度 500mm｜阳极氧化",
+      "remark": "可切断",
+      "price": "¥28.60",
+      "img": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/frame.png",
+      "agentNavigateTabName": "米思米订单",
+      "visitorUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/entry.html?page=product&sku=HFS5-2020-500",
+      "agentUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/agent-tab.html?sku=HFS5-2020-500",
+      "clickInteraction": "1",
+      "amount": "x33"
+     }
+    ],
+    "extraData": [
+     {
+      "orderNo": "BB1255EG64",
+      "customerCode": "000009"
+     }
+    ]
+   }
+  },
+  {
+   "number": "BB125FAD02",
+   "time": "2026-11-09 18:03:44",
+   "status": "待付款",
+   "tag": "待付款",
+   "items": [
+    {
+     "sku": "SFJ10-100",
+     "qty": 10
+    },
+    {
+     "sku": "B6000ZZ",
+     "qty": 20
+    }
+   ],
+   "logistics": "付款确认后安排出货",
+   "pay": "待付款（现金支付，请在 11-16 前完成）",
+   "invoice": "未开票",
+   "total": "¥399.00",
+   "card": {
+    "title": "米思米（中国）·演示",
+    "logo": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/logo.png",
+    "time": "2026-11-09 18:03:44",
+    "number": "BB125FAD02",
+    "status": "待付款",
+    "tag": {
+     "text": "待付款"
+    },
+    "price": "¥399.00",
+    "amount": "共30件",
+    "productList": [
+     {
+      "title": "直线轴 一端螺纹 SFJ10-100",
+      "subtitle": "轴径 10mm｜长度 100mm｜SUJ2 淬火",
+      "remark": "当日出货",
+      "price": "¥23.50",
+      "img": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/shaft.png",
+      "agentNavigateTabName": "米思米订单",
+      "visitorUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/entry.html?page=product&sku=SFJ10-100",
+      "agentUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/agent-tab.html?sku=SFJ10-100",
+      "clickInteraction": "1",
+      "amount": "x10"
+     },
+     {
+      "title": "深沟球轴承 B6000ZZ",
+      "subtitle": "内径 10mm｜外径 26mm｜双面铁盖",
+      "remark": "经济型",
+      "price": "¥8.20",
+      "img": "https://cdn.jsdelivr.net/gh/taiwanhuachenyu/misumi-mock-api@main/img/bearing.png",
+      "agentNavigateTabName": "米思米订单",
+      "visitorUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/entry.html?page=product&sku=B6000ZZ",
+      "agentUrl": "https://taiwanhuachenyu.github.io/misumi-mock-api/agent-tab.html?sku=B6000ZZ",
+      "clickInteraction": "1",
+      "amount": "x20"
+     }
+    ],
+    "extraData": [
+     {
+      "orderNo": "BB125FAD02",
+      "customerCode": "000009"
+     }
+    ]
+   }
+  }
+ ]
+}
