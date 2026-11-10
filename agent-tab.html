@@ -34,6 +34,9 @@
 <div class="top"><b>米思米订单 · 客户 <span id="code"></span></b><div id="company"></div></div>
 <div class="bar"><input id="kw" placeholder="搜订单号 / 型号 / 商品名"><span class="tabs"><button data-t="orders" class="on">订单</button><button data-t="products">商品</button></span></div>
 <div id="list"></div>
+<details class="box" style="color:#8a929c"><summary>调试</summary>
+  <div style="margin:6px 0"><button class="send ghost" onclick="sendTextTest()">发送测试文本</button></div>
+  <pre id="dbg" style="white-space:pre-wrap;font-size:11px;margin:0"></pre></details>
 <div id="toast"></div>
 <script>
 const q = new URLSearchParams(location.search);
@@ -58,13 +61,38 @@ function toast(t) {
   clearTimeout(toast.h); toast.h = setTimeout(() => el.style.display = "none", 2200);
 }
 
+// 工作台监听 window 的 message 事件（type=sendCard/sendText）。chat-commodity-card.js 只发给 parent；
+// 若侧边栏多包了一层 iframe，parent 不是工作台 → 这里逐层发给所有祖先窗口（各层只有工作台会处理）。
+function ancestors() {
+  const list = [];
+  let w = window;
+  for (let i = 0; i < 6 && w.parent && w.parent !== w; i++) { w = w.parent; list.push(w); }
+  return list;
+}
+
+function post(msg) {
+  const list = ancestors();
+  if (!list.length) return 0;
+  list.forEach(w => { try { w.postMessage(msg, "*"); } catch (e) {} });
+  return list.length;
+}
+
 function send(params, label) {
-  if (!window.ClinkChatApi || !ClinkChatApi.setIframeMsg) {
-    toast("请在在线客服工作台右侧「" + (D ? D.tabName : "米思米订单") + "」中使用");
-    return;
-  }
-  ClinkChatApi.setIframeMsg(params);
-  toast("已发送" + label);
+  const n = post(Object.assign({type: "sendCard"}, params));
+  if (!n) { toast("请在在线客服工作台右侧「" + (D ? D.tabName : "米思米订单") + "」中使用"); return; }
+  toast("已发送" + label + "（" + n + " 层）");
+  log("sendCard → " + n + " 层父窗口：" + JSON.stringify(params).slice(0, 160));
+}
+
+function sendTextTest() {
+  const n = post({type: "sendText", content: "【测试】这是从「米思米订单」侧边栏发出的文本"});
+  toast("已发送测试文本（" + n + " 层）");
+  log("sendText → " + n + " 层父窗口");
+}
+
+function log(s) {
+  const el = document.getElementById("dbg");
+  if (el) el.textContent = new Date().toLocaleTimeString() + " " + s + "\n" + el.textContent.slice(0, 1200);
 }
 
 function sendOrder(no) {
@@ -125,6 +153,7 @@ fetch("data.json").then(r => r.json()).then(d => {
   D = d;
   document.getElementById("code").textContent = q.get("customerCode") || extra.customerCode || d.customer.code;
   document.getElementById("company").textContent = entryText || (d.customer.company + "｜" + d.customer.contact);
+  log("页面版本 v2｜父窗口层数 " + ancestors().length + "｜visitorExtraInfo " + (q.get("visitorExtraInfo") ? "有" : "无") + "｜mainUniqueId " + (q.get("mainUniqueId") || "无"));
   if (focusSku && !focusOrder) { tab = "products"; document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x.dataset.t === "products")); }
   render();
 }).catch(e => document.getElementById("list").textContent = "数据加载失败：" + e);
