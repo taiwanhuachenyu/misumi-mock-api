@@ -102,7 +102,7 @@ function sendOrder(no) {
 
 function sendProduct(sku) {
   const p = D.products[sku];
-  send({title: p.title, subTitle: p.subtitle, description: p.remark + "｜" + p.delivery + "｜库存 " + p.stock,
+  send({title: p.title, subTitle: p.subtitle, description: (p.remark === p.delivery ? "" : p.remark + "｜") + "库存 " + p.stock,
         price: p.price, img: p.imgUrl, url: D.pages + "entry.html?page=product&sku=" + sku,
         subUrl: D.pages + "agent-tab.html?sku=" + sku, tabMenuName: D.tabName, status: p.delivery, time: "",
         extraInfo: [{name: "型号", value: sku}, {name: "出货", value: p.delivery}]}, "商品卡片 " + sku);
